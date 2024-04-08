@@ -32,6 +32,20 @@ const pacSize = 15;
 let pacmanX = Math.floor(numCols / 2) * blockSize;
 let pacmanY = Math.floor(numRows / 2) * blockSize;
 let pacmanDirection = 'right';
+let isMoving = false;
+
+// Define walls
+const walls = [
+  { x: 4 * blockSize, y: 5 * blockSize },
+  { x: 5 * blockSize, y: 5 * blockSize },
+  { x: 6 * blockSize, y: 5 * blockSize },
+  { x: 7 * blockSize, y: 5 * blockSize },
+  { x: 8 * blockSize, y: 5 * blockSize },
+  { x: 9 * blockSize, y: 5 * blockSize },
+  { x: 9 * blockSize, y: 4 * blockSize },
+  { x: 9 * blockSize, y: 3 * blockSize },
+  { x: 9 * blockSize, y: 2 * blockSize },
+];
 
 function drawPacman(x, y) {
   ctx.beginPath();
@@ -42,50 +56,68 @@ function drawPacman(x, y) {
   ctx.closePath();
 }
 
+function drawWalls() {
+  ctx.fillStyle = 'blue';
+  walls.forEach(wall => {
+    ctx.fillRect(wall.x, wall.y, blockSize, blockSize);
+  });
+}
+
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function update() {
   clearCanvas();
-  switch (pacmanDirection) {
-    case 'up':
-      pacmanY -= blockSize;
-      break;
-    case 'down':
-      pacmanY += blockSize;
-      break;
-    case 'left':
-      pacmanX -= blockSize;
-      break;
-    case 'right':
-      pacmanX += blockSize;
-      break;
+  drawWalls();
+
+  if (isMoving) {
+    switch (pacmanDirection) {
+      case 'up':
+        if (!isWall(pacmanX, pacmanY - blockSize)) pacmanY -= blockSize;
+        break;
+      case 'down':
+        if (!isWall(pacmanX, pacmanY + blockSize)) pacmanY += blockSize;
+        break;
+      case 'left':
+        if (!isWall(pacmanX - blockSize, pacmanY)) pacmanX -= blockSize;
+        break;
+      case 'right':
+        if (!isWall(pacmanX + blockSize, pacmanY)) pacmanX += blockSize;
+        break;
+    }
   }
-  // Teleport Pacman to the other side when it goes off the screen
-  if (pacmanX < 0) pacmanX = canvas.width - blockSize;
-  if (pacmanX >= canvas.width) pacmanX = 0;
-  if (pacmanY < 0) pacmanY = canvas.height - blockSize;
-  if (pacmanY >= canvas.height) pacmanY = 0;
 
   drawPacman(pacmanX, pacmanY);
+}
+
+function isWall(x, y) {
+  return walls.some(wall => wall.x === x && wall.y === y);
 }
 
 document.addEventListener('keydown', function(event) {
   switch(event.key) {
     case 'ArrowUp':
       pacmanDirection = 'up';
+      isMoving = true;
       break;
     case 'ArrowDown':
       pacmanDirection = 'down';
+      isMoving = true;
       break;
     case 'ArrowLeft':
       pacmanDirection = 'left';
+      isMoving = true;
       break;
     case 'ArrowRight':
       pacmanDirection = 'right';
+      isMoving = true;
       break;
   }
+});
+
+document.addEventListener('keyup', function(event) {
+  isMoving = false;
 });
 
 function gameLoop() {
@@ -97,4 +129,15 @@ gameLoop();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
 
