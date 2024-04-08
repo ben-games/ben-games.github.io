@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,6 +34,7 @@ let pacmanX = Math.floor(numCols / 2) * blockSize;
 let pacmanY = Math.floor(numRows / 2) * blockSize;
 let pacmanDirection = 'right';
 let isMoving = false;
+let score = 0;
 
 // Define walls
 const walls = [
@@ -74,18 +76,32 @@ function update() {
   if (isMoving) {
     switch (pacmanDirection) {
       case 'up':
-        if (!isWall(pacmanX, pacmanY - blockSize)) pacmanY -= blockSize;
+        if (!isWall(pacmanX, pacmanY - 2)) pacmanY -= 2;
         break;
       case 'down':
-        if (!isWall(pacmanX, pacmanY + blockSize)) pacmanY += blockSize;
+        if (!isWall(pacmanX, pacmanY + 2)) pacmanY += 2;
         break;
       case 'left':
-        if (!isWall(pacmanX - blockSize, pacmanY)) pacmanX -= blockSize;
+        if (!isWall(pacmanX - 2, pacmanY)) pacmanX -= 2;
         break;
       case 'right':
-        if (!isWall(pacmanX + blockSize, pacmanY)) pacmanX += blockSize;
+        if (!isWall(pacmanX + 2, pacmanY)) pacmanX += 2;
         break;
     }
+    // Warp Pacman to the other side if he touches the border
+    if (pacmanX < 0) pacmanX = canvas.width - blockSize;
+    if (pacmanX >= canvas.width) pacmanX = 0;
+    if (pacmanY < 0) pacmanY = canvas.height - blockSize;
+    if (pacmanY >= canvas.height) pacmanY = 0;
+  }
+
+  // Check for points
+  const pointX = Math.floor(pacmanX / blockSize) * blockSize + blockSize / 2;
+  const pointY = Math.floor(pacmanY / blockSize) * blockSize + blockSize / 2;
+
+  if (walls.some(wall => wall.x === pointX && wall.y === pointY)) {
+    score++;
+    console.log('Score:', score);
   }
 
   drawPacman(pacmanX, pacmanY);
@@ -129,15 +145,3 @@ gameLoop();
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
