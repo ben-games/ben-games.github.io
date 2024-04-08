@@ -1,11 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Pac-man</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacman Game</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+  }
+  canvas {
+    border: 2px solid white;
+  }
+</style>
 </head>
-
+<body>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
 <script>
-alert("In Progress!")
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const blockSize = 20;
+const numRows = 20;
+const numCols = 20;
+const pacSize = 15;
+let pacmanX = Math.floor(numCols / 2) * blockSize;
+let pacmanY = Math.floor(numRows / 2) * blockSize;
+let pacmanDirection = 'right';
+
+function drawPacman(x, y) {
+  ctx.beginPath();
+  ctx.arc(x, y, pacSize, 0.2 * Math.PI, 1.8 * Math.PI);
+  ctx.lineTo(x, y);
+  ctx.fillStyle = 'yellow';
+  ctx.fill();
+  ctx.closePath();
+}
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function update() {
+  clearCanvas();
+  switch (pacmanDirection) {
+    case 'up':
+      pacmanY -= blockSize;
+      break;
+    case 'down':
+      pacmanY += blockSize;
+      break;
+    case 'left':
+      pacmanX -= blockSize;
+      break;
+    case 'right':
+      pacmanX += blockSize;
+      break;
+  }
+  // Teleport Pacman to the other side when it goes off the screen
+  if (pacmanX < 0) pacmanX = canvas.width - blockSize;
+  if (pacmanX >= canvas.width) pacmanX = 0;
+  if (pacmanY < 0) pacmanY = canvas.height - blockSize;
+  if (pacmanY >= canvas.height) pacmanY = 0;
+
+  drawPacman(pacmanX, pacmanY);
+}
+
+document.addEventListener('keydown', function(event) {
+  switch(event.key) {
+    case 'ArrowUp':
+      pacmanDirection = 'up';
+      break;
+    case 'ArrowDown':
+      pacmanDirection = 'down';
+      break;
+    case 'ArrowLeft':
+      pacmanDirection = 'left';
+      break;
+    case 'ArrowRight':
+      pacmanDirection = 'right';
+      break;
+  }
+});
+
+function gameLoop() {
+  update();
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
 </script>
+</body>
 </html>
 
